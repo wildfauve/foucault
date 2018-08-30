@@ -15,19 +15,19 @@ module Types
 end
 
 module Foucault
-  require './lib/foucault/logger'
-  require './lib/foucault/logging'
+  require 'foucault/logger'
+  require 'foucault/logging'
 
-  require './lib/foucault/net'
-  require './lib/foucault/circuit'
-  require './lib/foucault/configuration'
-  require './lib/foucault/http_connection'
-  require './lib/foucault/http_port'
-  require './lib/foucault/net_response_value'
+  require 'foucault/net'
+  require 'foucault/circuit'
+  require 'foucault/configuration'
+  require 'foucault/http_connection'
+  require 'foucault/http_port'
+  require 'foucault/net_response_value'
 
-  require './lib/foucault/kafka_connection'
-  require './lib/foucault/kafka_brokers'
-  require './lib/foucault/kafka_port'
+  require 'foucault/kafka_connection'
+  require 'foucault/kafka_brokers'
+  require 'foucault/kafka_port'
 
   Fn = Fn::Fn
   M = Dry::Monads

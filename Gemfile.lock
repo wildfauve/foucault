@@ -8,7 +8,7 @@ GIT
 PATH
   remote: .
   specs:
-    foucault (0.1.0)
+    foucault (0.1.1)
       dry-configurable
       dry-monads (~> 1.0)
       dry-struct
