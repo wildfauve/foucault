@@ -1,11 +1,41 @@
+require 'base64'
+
 module Foucault
   class Net
 
     class << self
 
-      def json_body_fn
-        -> b { b.to_json }
+      def publish
+        -> topic, partition_key, body_fn, event {
+          KafkaPort.publish.(topic, partition_key, body_fn, event)
+        }.curry
       end
+
+      # def auth
+      #   -> env, creds {
+      #     ClientCredentialsGrant.new.(client_id: creds[:client_id], secret: creds[:client_secret], env: env)
+      #   }.curry
+      # end
+
+      def post
+        -> service, resource, hdrs, enc, body_fn, body {
+          HttpPort.post.(service, resource, body_fn, enc, body)
+        }.curry
+      end
+
+      # @param service String
+      # @param resource String
+      # @param hdrs []
+      # @param enc String
+      # @param query
+      # Example
+      # > get.(@env[:host], "/userinfo", {authorization: "Bearer <token> }, :url_encoded, {} )
+      def get
+        -> service, resource, hdrs, enc, query {
+            HttpPort.get.(service, resource, hdrs, enc, query)
+        }.curry
+      end
+
 
       # That is, not a circuit breaker
       # @param fn(Llambda)      : Must take the current retries as the last argument (when partially applied)
@@ -19,53 +49,25 @@ module Foucault
         }.curry
       end
 
-      # def auth
-      #   -> env, creds {
-      #     ClientCredentialsGrant.new.(client_id: creds[:client_id], secret: creds[:client_secret], env: env)
-      #   }.curry
-      # end
-
-      def post
-        -> service, resource, hdrs, enc, body, body_fn {
-          compose.(
-            either.(http_ok).(http_ok_result).(failure),
-            -> x { Adapter.post(service: service, resource: resource, body: body, body_fn: body_fn, hdrs: hdrs, encoding: enc) }
-          ).(nil)
+      # (a -> a) -> Hash
+      # @param c [String] : Client or user
+      # @param s [String] : secret or password
+      # @return [Hash{Symbol=>String}]
+      def basic_auth_header
+        -> c, s {
+          { authorization: ("Basic " + Base64::strict_encode64("#{c}:#{s}")).chomp }
         }.curry
       end
 
-      def put
-        -> service, resource, hdrs, enc, body, body_fn {
-          compose.(
-            either.(http_ok).(http_ok_result).(failure),
-            -> x { Adapter.put(service: service, resource: resource, body: body, body_fn: body_fn, hdrs: hdrs, encoding: enc) }
-          ).(nil)
-        }.curry
+      # @param  Array[Hash]
+      # @return [Hash{Symbol=>String}]
+      def header_builder
+        # -> *hdrs { hdrs.reduce({}, :merge) }
+        -> *hdrs { Fn.inject.({}).(Fn.merge).(hdrs) }
       end
 
-      # @param service String
-      # @param resource String
-      # @param hdrs []
-      # @param enc String
-      # @param query
-      # Example
-      # > Nfn.get.(@env[:host], "/userinfo", {authorization: "Bearer <token> }, :url_encoded, {})
-      def get
-        -> service, resource, hdrs, enc, query {
-          Fn.compose.(
-            Fn.either.(http_ok).(http_ok_result).(Fn.failure),
-            -> x { HttpPort.get(service: service, resource: resource, query_params: query, hdrs: hdrs, encoding: enc) }
-          ).(nil)
-        }.curry
-      end
-
-
-      def http_ok_result
-        -> r { Fn.success.(r.body) }
-      end
-
-      def http_ok
-        -> v { v.status == :ok }
+      def json_body_fn
+        -> body { body.to_json }
       end
 
     end # class self

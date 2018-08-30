@@ -1,3 +1,5 @@
+require 'stoplight'
+
 module Foucault
 
   class Circuit

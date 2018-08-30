@@ -11,8 +11,15 @@ PATH
     foucault (0.1.0)
       dry-configurable
       dry-monads (~> 1.0)
+      dry-struct
+      dry-types
+      faraday
       fn
+      nokogiri
+      ruby-kafka
       stoplight
+      typhoeus
+      zk
 
 GEM
   remote: https://rubygems.org/
@@ -20,16 +27,47 @@ GEM
     coderay (1.1.2)
     concurrent-ruby (1.0.5)
     diff-lcs (1.3)
+    digest-crc (0.4.1)
     dry-configurable (0.7.0)
       concurrent-ruby (~> 1.0)
+    dry-container (0.6.0)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 0.1, >= 0.1.3)
     dry-core (0.4.7)
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.1)
+    dry-inflector (0.1.2)
+    dry-logic (0.4.2)
+      dry-container (~> 0.2, >= 0.2.6)
+      dry-core (~> 0.2)
+      dry-equalizer (~> 0.2)
     dry-monads (1.0.1)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.4)
       dry-equalizer
+    dry-struct (0.5.1)
+      dry-core (~> 0.4, >= 0.4.3)
+      dry-equalizer (~> 0.2)
+      dry-types (~> 0.13)
+      ice_nine (~> 0.11)
+    dry-types (0.13.2)
+      concurrent-ruby (~> 1.0)
+      dry-container (~> 0.3)
+      dry-core (~> 0.4, >= 0.4.4)
+      dry-equalizer (~> 0.2)
+      dry-inflector (~> 0.1, >= 0.1.2)
+      dry-logic (~> 0.4, >= 0.4.2)
+    ethon (0.11.0)
+      ffi (>= 1.3.0)
+    faraday (0.15.2)
+      multipart-post (>= 1.2, < 3)
+    ffi (1.9.25)
+    ice_nine (0.11.2)
     method_source (0.9.0)
+    mini_portile2 (2.3.0)
+    multipart-post (2.0.0)
+    nokogiri (1.8.4)
+      mini_portile2 (~> 2.3.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -47,7 +85,14 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    ruby-kafka (0.7.0)
+      digest-crc
     stoplight (2.1.3)
+    typhoeus (1.3.0)
+      ethon (>= 0.9.0)
+    zk (1.9.6)
+      zookeeper (~> 1.4.0)
+    zookeeper (1.4.11)
 
 PLATFORMS
   ruby

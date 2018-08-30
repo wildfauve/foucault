@@ -3,7 +3,6 @@ require "foucault"
 require 'pry'
 
 M = Dry::Monads
-Fn = Fn::Fn
 
 class TestLogger
   def debug(msg); puts "TEST LOGGER ===> #{msg}"; end

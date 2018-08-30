@@ -34,7 +34,13 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dry-monads', "~> 1.0"
   spec.add_dependency 'dry-configurable'
   spec.add_dependency 'fn'
-
+  spec.add_dependency 'typhoeus'
+  spec.add_dependency 'faraday'
+  spec.add_dependency 'nokogiri'
+  spec.add_dependency "dry-types"
+  spec.add_dependency "dry-struct"
+  spec.add_dependency 'ruby-kafka'
+  spec.add_dependency 'zk'
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
