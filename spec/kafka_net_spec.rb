@@ -2,9 +2,9 @@ require "spec_helper"
 
 RSpec.describe Foucault::Net do
 
-  context 'successful publishing' do
+  subject { Foucault::Net }
 
-    subject { Foucault::Net }
+  context 'successful publishing' do
 
       before do
 
@@ -31,8 +31,6 @@ RSpec.describe Foucault::Net do
 
   context 'successful publishing' do
 
-    subject { Foucault::Net }
-
       before do
 
         class ClientDouble
@@ -58,31 +56,15 @@ RSpec.describe Foucault::Net do
 
   context 'problems finding brokers' do
 
-    before do
-      class ConnectionDouble
-        def connection(*args) ; self ; end
-        def publish(*args)
-          raise Foucault::KafkaConnection::ZookeeperFailure.new(msg: "Zookeeper connection failure", retryable: false)
-        end
-      end
-
-      Foucault::IC.enable_stubs!
-      Foucault::IC.stub('kafka_connection', ConnectionDouble)
-    end
-
-    after do
-      Foucault::IC.unstub('kafka_connection')
-    end
-
     it 'should return a none' do
 
-      channel = Foucault::KafkaPort.new.send do |p|
-        p.topic = "topic"
-        p.event = { kind: :event }
-        p.partition_key = "123"
-      end
+      allow_any_instance_of(Foucault::KafkaConnection).to receive(:kafka_client).and_return(M.Maybe(nil))
 
-      expect { channel.() }.to raise_error(Foucault::KafkaChannel::RemoteServiceError)
+      result = subject.publish.("io.mindainfo.account.transaction", "123", subject.json_body_fn, { kind: :event } )
+
+      expect(result).to be_failure
+      expect(result.failure.body).to be_nil
+      expect(result.failure.status).to eq :fail
 
     end
 

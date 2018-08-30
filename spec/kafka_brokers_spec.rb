@@ -32,7 +32,7 @@ RSpec.describe Foucault::KafkaBrokers do
                     "version"=>4
                   }.to_json
 
-      @zk_client = double("ZK", children: ["0", "1"]) #, get: [node_data, nil])
+      @zk_client = double("ZK", children: ["0", "1"], close: nil) #, get: [node_data, nil])
 
     end
 
@@ -63,7 +63,7 @@ RSpec.describe Foucault::KafkaBrokers do
         config.zookeeper_broker_list = nil
       end
 
-      @zk_client = double("ZK", children: ["0", "1"]) #, get: [node_data, nil])
+      @zk_client = double("ZK", children: ["0", "1"], close: nil) #, get: [node_data, nil])
 
     end
 
@@ -80,7 +80,7 @@ RSpec.describe Foucault::KafkaBrokers do
         config.zookeeper_broker_list = "localhost:2181"
       end
 
-      @zk_client = double("ZK", children: []) #, get: [node_data, nil])
+      @zk_client = double("ZK", children: [], close: nil) #, get: [node_data, nil])
 
       allow(ZK).to receive(:new).with("localhost:2181").and_return(@zk_client)
 

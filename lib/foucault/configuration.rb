@@ -12,6 +12,7 @@ module Foucault
     setting :type_parsers, {}
     setting :kafka_client_id
     setting :zookeeper_broker_list
+    setting :kafka_broker_list
     setting :logger
 
   end  # class Configuration

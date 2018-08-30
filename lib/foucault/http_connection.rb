@@ -7,6 +7,30 @@ module Foucault
     HTTP_CONNECTION_FAILURE = :http_connection_failure
 
     def connection(address, encoding, cache_store = nil, instrumenter = nil)
+      @http_connection = http_connection(address, encoding, cache_store = nil, instrumenter = nil)
+      self
+    end
+
+    def get(hdrs, params)
+      M.Try {
+        @http_connection.get do |r|
+          r.headers = hdrs
+          r.params = params
+        end
+      }.to_result
+    end
+
+    def post(body)
+      M.Try {
+        @http_connection.post do |r|
+          r.body = body
+        end
+      }
+    end
+
+    private
+
+    def http_connection(address, encoding, cache_store = nil, instrumenter = nil)
       begin
         # caching = cache_options(cache_store, instrumenter)
         faraday_connection = Faraday.new(:url => address) do |faraday|
@@ -20,13 +44,6 @@ module Foucault
         M.Failure([HTTP_CONNECTION_FAILURE])
       end
     end
-
-    # def cache_options(cache_store, instrumenter)
-    #   options = {}
-    #   options[:store] = cache_store if cache_store
-    #   options[:instrumenter] = instrumenter if instrumenter
-    #   options
-    # end
 
   end
 

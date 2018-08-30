@@ -28,6 +28,7 @@ module Foucault
       # @param hdrs []
       # @param enc String
       # @param query
+      # @return Result(NetResponseValue)
       # Example
       # > get.(@env[:host], "/userinfo", {authorization: "Bearer <token> }, :url_encoded, {} )
       def get
@@ -38,14 +39,15 @@ module Foucault
 
 
       # That is, not a circuit breaker
-      # @param fn(Llambda)      : Must take the current retries as the last argument (when partially applied)
+      # @param fn(Llambda)      : A partially applied fn
+      # @param args             : The function's arguments as either an array or hash
       # @param retries(Integer) : The max number of retries
       def retryer
-        -> fn, retries {
-          result = fn.()
+        -> fn, args, retries {
+          result = fn.(*args)
           return result if result.success?
           return result if retries == 0
-          retryer.(fn, retries - 1)
+          retryer.(fn, args, retries - 1)
         }.curry
       end
 
@@ -62,7 +64,6 @@ module Foucault
       # @param  Array[Hash]
       # @return [Hash{Symbol=>String}]
       def header_builder
-        # -> *hdrs { hdrs.reduce({}, :merge) }
         -> *hdrs { Fn.inject.({}).(Fn.merge).(hdrs) }
       end
 

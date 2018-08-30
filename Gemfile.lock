@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/wildfauve/fn.git
-  revision: 2ba5228c3b96affcf55f444c56ff0221a09c30fe
+  revision: 5a7130df0a5f50b1b36c244a554f1ae4d6a4eebc
   specs:
     fn (0.1.4)
       dry-monads (~> 1.0)

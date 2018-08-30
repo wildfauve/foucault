@@ -13,7 +13,7 @@ module Foucault
 
       unless client.some?
         info "Foucault::KafkaConnection#publish Zookeeper connection failure, client: #{client.value_or}"
-        raise self.class::ZookeeperFailure.new(msg: "Zookeeper connection failure", retryable: false) unless client.some?
+        return M::Failure(nil)
       end
 
       begin

@@ -2,14 +2,47 @@ RSpec.describe Foucault::Net do
 
   subject { Foucault::Net }
 
+  # context "#get" do
+  #
+  #   it 'tries a real get--dont forget to comment out!' do
+  #     result = subject.get.("http://api.example.com", "/resource", {authorization: "uid:pwd"}, :url_encoded, {param1: 1})
+  #   end
+  #
+  #   it 'uses the retryer' do
+  #     fn = subject.get
+  #     args = ["http://api.example.com", "/resource", {authorization: "uid:pwd"}, :url_encoded, {param1: 1}]
+  #
+  #     result = subject.retryer.(fn, args, 10)
+  #   end
+  #
+  # end
+
   context "#post" do
+
+    let(:json_response)  {double("http_resp", body: '{"message" : "I am json"} ', status: 201,
+                                    headers: {"content-type"=>"application/json"})
+                         }
+
+    let(:faraday_request_object) { double("request", :body= => {}) }
+
+    let(:faraday_connection_object) { double("connection", use: faraday_request_object,
+                                                           response: faraday_request_object,
+                                                           adapter: faraday_request_object,
+                                                           request: :url_encoded)
+                                                           }
+
 
     it 'posts to the http resource' do
 
-# service, resource, hdrs, enc, body_fn, body
-      result = subject.post.("http://www.example.com", "/things", nil, nil, subject.json_body_fn, {message: "some message"})
+      expect(Faraday).to receive(:new).with(url: "http://api.example.com/resource").and_yield(faraday_connection_object)
 
-      binding.pry
+      expect(faraday_request_object).to receive(:post).and_yield(faraday_request_object).and_return(json_response)
+
+      result = subject.post.("http://api.example.com", "/resource", nil, nil, subject.json_body_fn, {message: "some message"})
+
+      expect(result).to be_success
+      expect(result.value_or.status).to be :ok
+      expect(result.value_or.body).to eq({"message" => "I am json"})
 
     end
 
@@ -19,7 +52,7 @@ RSpec.describe Foucault::Net do
 
     let(:json_response)  {double("http_resp", body: '{"message" : "I am json"} ', status: 200,
                                     headers: {"content-type"=>"application/json"})
-}
+                         }
 
     let(:faraday_request_object) { double("request") }
 

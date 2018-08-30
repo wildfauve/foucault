@@ -8,13 +8,21 @@ module Foucault
 
     def call
       return M::Maybe(nil) unless client
-      M::Maybe(client).bind(kafka_broker_ids)
-                      .bind(kafka_brokers)
-                      .bind(parse)
-                      .bind(to_broker_address)
+
+      kafka_broker_list ? M::Maybe(kafka_broker_list) : brokers_from_zookeeper
     end
 
     private
+
+    def brokers_from_zookeeper
+      result = M::Maybe(client).bind(kafka_broker_ids)
+                               .bind(kafka_brokers)
+                               .bind(parse)
+                               .bind(to_broker_address)
+      client.close  # closes the connection to Zookeeper
+      result
+    end
+
 
     def kafka_broker_ids
       -> (client) { get_brokers_from_ids }
@@ -54,12 +62,15 @@ module Foucault
     end
 
     def broker_list
-      binding.pry
       unless configuration.config.zookeeper_broker_list
         error "Discourse::Zookeeper; zookeeper_broker_list not set"
         return
       end
       configuration.config.zookeeper_broker_list
+    end
+
+    def kafka_broker_list
+      configuration.config.kafka_broker_list
     end
 
     def configuration

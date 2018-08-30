@@ -7,7 +7,7 @@ module Foucault
       def post
         -> service, resource, body_fn, enc, body {
           Fn.compose.(
-            Fn.either.(http_ok).(Fn.success).(Fn.failure),
+            Fn.either.(net_ok).(Fn.success).(Fn.failure),
             response_value,
             run_post.(body_fn, body),
             addressed.(service, resource),
@@ -15,7 +15,6 @@ module Foucault
         }
       end
 
-# service, resource, hdrs, enc, query
       def get
         -> service, resource, hdrs, enc, query {
           Fn.compose.(
@@ -29,18 +28,13 @@ module Foucault
 
       def run_post
         -> body_fn, body, connection {
-          connection.post do |r|
-            r.body = body_fn.(body)
-          end
+          connection.post(body_fn.(body))
         }.curry
       end
 
       def run_get
         -> hdrs, query, connection {
-          connection.get do |r|
-            r.headers = hdrs
-            r.params = query
-          end
+          connection.get(hdrs, query)
         }.curry
       end
 
@@ -60,10 +54,7 @@ module Foucault
 
       def response_value
         -> response {
-          NetResponseValue.new(
-            status: evalulate_status.(response.status),
-            body: response_body_parser.(response.headers["content-type"]).(response)
-          )
+          response.success? ? returned_response(response) : catastrophic_failure
         }
       end
 
@@ -105,6 +96,20 @@ module Foucault
             default_parse
           end
         }
+      end
+
+      def returned_response(response)
+        NetResponseValue.new(
+          status: evalulate_status.(response.value_or.status),
+          body: response_body_parser.(response.value_or.headers["content-type"]).(response.value_or)
+        )
+      end
+
+      def catastrophic_failure
+        NetResponseValue.new(
+          status: NetResponseValue::SYSTEM_FAILURE,
+          body: nil
+        )
       end
 
       def html_parser
