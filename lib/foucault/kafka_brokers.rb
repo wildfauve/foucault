@@ -7,30 +7,31 @@ module Foucault
     include Logging
 
     def call
-      return M::Maybe(nil) unless client
+      return M::Maybe(kafka_broker_list) if kafka_broker_list   # first check the config for the seeded brokers
 
+      return M::Maybe(nil) unless zookeeper_client
       kafka_broker_list ? M::Maybe(kafka_broker_list) : brokers_from_zookeeper
     end
 
     private
 
     def brokers_from_zookeeper
-      result = M::Maybe(client).bind(kafka_broker_ids)
+      result = M::Maybe(zookeeper_client).bind(kafka_broker_ids)
                                .bind(kafka_brokers)
                                .bind(parse)
                                .bind(to_broker_address)
-      client.close  # closes the connection to Zookeeper
+      zookeeper_client.close  # closes the connection to Zookeeper
       result
     end
 
 
     def kafka_broker_ids
-      -> (client) { get_brokers_from_ids }
+      -> (zookeeper_client) { get_brokers_from_ids }
     end
 
     def get_brokers_from_ids
       begin
-        ids = client.children(KAFKA_BROKER_IDS_PATH)
+        ids = zookeeper_client.children(KAFKA_BROKER_IDS_PATH)
         ids.empty? ? M::Maybe(nil) : M::Maybe(ids)
       rescue Zookeeper::Exceptions::ZookeeperException => e
         M::Maybe(nil)
@@ -49,7 +50,7 @@ module Foucault
     #  "version"=>4}
 
     def kafka_brokers
-      ->(ids) { M::Maybe(ids.map { |id| client.get("#{KAFKA_BROKER_IDS_PATH}/#{id}")[0] }
+      ->(ids) { M::Maybe(ids.map { |id| zookeeper_client.get("#{KAFKA_BROKER_IDS_PATH}/#{id}")[0] }
                             .flatten.delete_if(&:nil?) ) }
     end
 
@@ -61,29 +62,29 @@ module Foucault
       ->(data) { M::Maybe(data.map { |d| JSON.parse(d) } ) }
     end
 
+    def zookeeper_client
+      begin
+        @zookeeper_client ||= ZK.new(broker_list) if broker_list
+      rescue StandardError => e
+        info "Zookeeper Discovery: Exception: #{e.message}"
+        nil
+      end
+    end
+
     def broker_list
-      unless configuration.config.zookeeper_broker_list
-        error "Discourse::Zookeeper; zookeeper_broker_list not set"
+      unless configuration.config.zookeeper_broker_list || configuration.config.kafka_broker_list
+        error "Foucault::Zookeeper; zookeeper_broker_list not set"
         return
       end
       configuration.config.zookeeper_broker_list
     end
 
     def kafka_broker_list
-      configuration.config.kafka_broker_list
+      Fn.split.(",").(configuration.config.kafka_broker_list)
     end
 
     def configuration
       Configuration
-    end
-
-    def client
-      begin
-        @client ||= ZK.new(broker_list) if broker_list
-      rescue StandardError => e
-        info "Zookeeper Discovery: Exception: #{e.message}"
-        nil
-      end
     end
 
   end

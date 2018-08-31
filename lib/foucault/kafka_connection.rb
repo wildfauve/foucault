@@ -17,7 +17,7 @@ module Foucault
       end
 
       begin
-        client.value_or.deliver_message(@event, topic: @topic, partition_key: @partition_key)
+        client.value_or.deliver_message(event, topic: topic, partition_key: partition_key)
         M::Success(nil)
       rescue Kafka::Error => e
         info "Foucault::KafkaChannel #{topic}; #{e}"
@@ -40,7 +40,7 @@ module Foucault
 
     def kafka_client
       return M::Maybe(nil) unless kafka_broker_list.some?
-      @client ||= M::Maybe(client_adapter.new(seed_brokers: kafka_broker_list.value_or, client_id: configuration.config.kafka_client_id, logger: logger.configured_logger))
+      @client ||= M::Maybe(client_adapter.new(kafka_broker_list.value_or, client_id: configuration.config.kafka_client_id, logger: logger.configured_logger))
     end
 
     def kafka_broker_list
