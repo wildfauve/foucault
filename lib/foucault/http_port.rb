@@ -5,11 +5,11 @@ module Foucault
     class << self
 
       def post
-        -> service, resource, body_fn, enc, body {
+        -> service, resource, hdrs, body_fn, enc, body {
           Fn.compose.(
             Fn.either.(net_ok).(Fn.success).(Fn.failure),
             response_value,
-            run_post.(body_fn, body),
+            run_post.(hdrs, body_fn, body),
             addressed.(service, resource),
           ).(connection.(enc))
         }
@@ -27,8 +27,8 @@ module Foucault
       end
 
       def run_post
-        -> body_fn, body, connection {
-          connection.post(body_fn.(body))
+        -> hdrs, body_fn, body, connection {
+          connection.post(hdrs, body_fn.(body))
         }.curry
       end
 

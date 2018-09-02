@@ -19,7 +19,7 @@ module Foucault
 
       def post
         -> service, resource, hdrs, enc, body_fn, body {
-          HttpPort.post.(service, resource, body_fn, enc, body)
+          HttpPort.post.(service, resource, hdrs, body_fn, enc, body)
         }.curry
       end
 

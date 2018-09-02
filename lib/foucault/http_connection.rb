@@ -20,10 +20,11 @@ module Foucault
       }.to_result
     end
 
-    def post(body)
+    def post(hdrs, body)
       M.Try {
         @http_connection.post do |r|
           r.body = body
+          r.headers = hdrs
         end
       }
     end
