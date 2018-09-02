@@ -114,7 +114,7 @@ module Foucault
         -> response { Nokogiri::XML(response.body) }
       end
 
-      def xml_parse
+      def xml_parser
         -> response { Nokogiri::XML(response.body) }
       end
 
