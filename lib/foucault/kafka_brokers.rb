@@ -80,7 +80,7 @@ module Foucault
     end
 
     def kafka_broker_list
-      Fn.split.(",").(configuration.config.kafka_broker_list)
+      Fn.split.(",").(configuration.config.kafka_broker_list) unless configuration.config.kafka_broker_list.nil?
     end
 
     def configuration

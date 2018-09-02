@@ -23,7 +23,7 @@ RSpec.describe Foucault::Net do
                                     headers: {"content-type"=>"application/json"})
                          }
 
-    let(:faraday_request_object) { double("request", :body= => {}) }
+    let(:faraday_request_object) { double("request", :headers= => {}, :body= => {}) }
 
     let(:faraday_connection_object) { double("connection", use: faraday_request_object,
                                                            response: faraday_request_object,
@@ -38,7 +38,7 @@ RSpec.describe Foucault::Net do
 
       expect(faraday_request_object).to receive(:post).and_yield(faraday_request_object).and_return(json_response)
 
-      result = subject.post.("http://api.example.com", "/resource", nil, nil, subject.json_body_fn, {message: "some message"})
+      result = subject.post.("http://api.example.com", "/resource", {}, nil, subject.json_body_fn, {message: "some message"})
 
       expect(result).to be_success
       expect(result.value_or.status).to be :ok
