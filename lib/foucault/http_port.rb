@@ -88,12 +88,10 @@ module Foucault
             html_parser
           when "application/json"
             json_parser
-          when "application/xml"
-            xml_parser
-          when "text/xml"
+          when "application/xml", "application/soap+xml", "text/xml"
             xml_parser
           else
-            default_parse
+            json_parser
           end
         }
       end
