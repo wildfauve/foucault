@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri'
   spec.add_dependency "dry-types"
   spec.add_dependency "dry-struct"
-  spec.add_dependency 'ruby-kafka'
+  spec.add_dependency 'ruby-kafka', '~> 0.5.0.beta5'
   spec.add_dependency 'zk'
 
   spec.add_development_dependency "bundler", "~> 1.16"
