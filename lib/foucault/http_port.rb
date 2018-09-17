@@ -54,6 +54,7 @@ module Foucault
 
       def response_value
         -> response {
+          binding.pry
           response.success? ? returned_response(response) : catastrophic_failure
         }
       end
@@ -86,6 +87,8 @@ module Foucault
           case type
           when "text/html"
             html_parser
+          when "text/plain"
+            text_parser
           when "application/json"
             json_parser
           when "application/xml", "application/soap+xml", "text/xml"
@@ -120,6 +123,10 @@ module Foucault
 
       def json_parser
         -> response { JSON.parse(response.body) }
+      end
+
+      def text_parser
+        -> response { response.body }
       end
 
       def net_ok
