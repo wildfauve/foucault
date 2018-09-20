@@ -54,7 +54,6 @@ module Foucault
 
       def response_value
         -> response {
-          binding.pry
           response.success? ? returned_response(response) : catastrophic_failure
         }
       end
