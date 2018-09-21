@@ -1,14 +1,14 @@
 GIT
   remote: https://github.com/wildfauve/fn.git
-  revision: 5a7130df0a5f50b1b36c244a554f1ae4d6a4eebc
+  revision: 6d18fe6df82341522c48fce5682dafd74790d068
   specs:
-    fn (0.1.4)
+    fn (0.1.10)
       dry-monads (~> 1.0)
 
 PATH
   remote: .
   specs:
-    foucault (0.1.6)
+    foucault (0.1.9)
       dry-configurable
       dry-monads (~> 1.0)
       dry-struct
@@ -58,7 +58,7 @@ GEM
       dry-logic (~> 0.4, >= 0.4.2)
     ethon (0.11.0)
       ffi (>= 1.3.0)
-    faraday (0.15.2)
+    faraday (0.15.3)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
     ice_nine (0.11.2)
