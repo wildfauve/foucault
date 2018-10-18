@@ -1,4 +1,4 @@
-module Discourse
+module Foucault
 
   class KafkaChannel
 
@@ -23,17 +23,17 @@ module Discourse
       begin
         msg = representer.(event)
 
-        info "Discourse::KafkaChannel#to_port topic: #{topic}, message: #{msg}"
+        info "Foucault::KafkaChannel#to_port topic: #{topic}, message: #{msg}"
 
         connection = kafka_connection.new.connection(topic: topic, event: msg, partition_key: partition_key)
 
         connection.publish
         # returns a Maybe Monad, so, we'll throw an exception as this is the interface expected.
-      rescue Discourse::PortException => e
-        info "Discourse::KafkaChannel #{channel_to_s}; #{e}; retryable: #{e.retryable}"
+      rescue Foucault::PortException => e
+        info "Foucault::KafkaChannel #{channel_to_s}; #{e}; retryable: #{e.retryable}"
         raise self.class::RemoteServiceError.new(msg: e.message, retryable: e.retryable)
       rescue Kafka::Error => e
-        info "Discourse::KafkaChannel #{channel_to_s}; #{e}"
+        info "Foucault::KafkaChannel #{channel_to_s}; #{e}"
         raise self.class::KafkaServiceError.new(msg: e.message, retryable: false)
       end
 
