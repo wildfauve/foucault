@@ -1,20 +1,20 @@
 GIT
-  remote: https://github.com/wildfauve/fn.git
-  revision: 8a4c5bc65a9d3f3d927fae52c498b609d4fa3f1b
+  remote: https://github.com/wildfauve/funcify.git
+  revision: 818d05dfaa9a8d49cd5ecf48ff9a9c26f5344acb
   specs:
-    fn (0.2.0)
+    funcify (0.2.0)
       dry-monads (~> 1.0)
 
 PATH
   remote: .
   specs:
-    foucault (0.1.10)
+    foucault (0.1.11)
       dry-configurable
       dry-monads (~> 1.0)
       dry-struct
       dry-types
       faraday
-      fn
+      funcify
       nokogiri
       ruby-kafka (~> 0.5.0.beta5)
       stoplight
@@ -40,7 +40,7 @@ GEM
       dry-container (~> 0.2, >= 0.2.6)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
-    dry-monads (1.0.1)
+    dry-monads (1.1.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.4)
       dry-equalizer
@@ -97,8 +97,8 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.16)
-  fn!
   foucault!
+  funcify!
   pry
   rake (~> 10.0)
   rspec (~> 3.0)

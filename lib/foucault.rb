@@ -4,7 +4,7 @@ require 'dry/monads/maybe'
 require 'dry-struct'
 require 'dry-types'
 require 'dry-configurable'
-require 'fn'
+require 'funcify'
 require 'nokogiri'
 require 'ruby-kafka'
 require 'zk'
@@ -29,6 +29,6 @@ module Foucault
   require 'foucault/kafka_brokers'
   require 'foucault/kafka_port'
 
-  Fn = Fn::Fn
+  Fn = Funcify::Fn
   M = Dry::Monads
 end
