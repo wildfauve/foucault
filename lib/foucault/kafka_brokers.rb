@@ -2,44 +2,45 @@ module Foucault
 
   class KafkaBrokers
 
-    include Dry::Monads::Try::Mixin
+    include Dry::Monads::Maybe::Mixin
+
 
     KAFKA_BROKER_IDS_PATH = "/brokers/ids"
 
     include Logging
 
     def call
-      return Try(kafka_broker_list) if kafka_broker_list   # first check the config for the seeded brokers
+      return Maybe(kafka_broker_list) if kafka_broker_list   # first check the config for the seeded brokers
 
-      return Try(nil) unless zookeeper_client
-      kafka_broker_list ? Try(kafka_broker_list) : brokers_from_zookeeper
+      return Maybe(nil) unless zookeeper_client
+      kafka_broker_list ? Maybe(kafka_broker_list) : brokers_from_zookeeper
     end
 
     private
 
     def brokers_from_zookeeper
-      result = Try(zookeeper_client).bind(kafka_broker_ids)
-                               .bind(kafka_brokers)
-                               .bind(parse)
-                               .bind(to_broker_address)
+      result = Maybe(zookeeper_client).bind(kafka_broker_ids)
+                                      .bind(kafka_brokers)
+                                      .bind(parse)
+                                      .bind(to_broker_address)
       zookeeper_client.close  # closes the connection to Zookeeper
       result
     end
 
 
     def kafka_broker_ids
-      -> (zookeeper_client) { get_brokers_from_ids }
+      -> zookeeper_client { get_brokers_from_ids }
     end
 
     def get_brokers_from_ids
       begin
         ids = zookeeper_client.children(KAFKA_BROKER_IDS_PATH)
-        ids.empty? ? Try(nil) : Try(ids)
+        ids.empty? ? Maybe(nil) : Maybe(ids)
       rescue Zookeeper::Exceptions::ZookeeperException => e
-        Try(nil)
+        Maybe(nil)
       rescue StandardError => e
         info "Zookeeper Discovery: Exception: #{e.message}"
-        Try(nil)
+        Maybe(nil)
       end
     end
 
@@ -52,16 +53,16 @@ module Foucault
     #  "version"=>4}
 
     def kafka_brokers
-      ->(ids) { Try(ids.map { |id| zookeeper_client.get("#{KAFKA_BROKER_IDS_PATH}/#{id}")[0] }
+      ->(ids) { Maybe(ids.map { |id| zookeeper_client.get("#{KAFKA_BROKER_IDS_PATH}/#{id}")[0] }
                             .flatten.delete_if(&:nil?) ) }
     end
 
     def to_broker_address#(broker)
-      -> (brokers) { Try(brokers.map { |broker| "#{broker["host"]}:#{broker["port"]}" } ) }
+      -> (brokers) { Maybe(brokers.map { |broker| "#{broker["host"]}:#{broker["port"]}" } ) }
     end
-    
+
     def parse
-      ->(data) { Try(data.map { |d| JSON.parse(d) } ) }
+      ->(data) { Maybe(data.map { |d| JSON.parse(d) } ) }
     end
 
     def zookeeper_client
