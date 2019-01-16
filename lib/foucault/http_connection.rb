@@ -4,6 +4,9 @@ module Foucault
 
   class HttpConnection
 
+    include Dry::Monads::Try::Mixin
+    include Dry::Monads::Result::Mixin
+
     HTTP_CONNECTION_FAILURE = :http_connection_failure
 
     def connection(address, encoding, cache_store = nil, instrumenter = nil)
@@ -12,18 +15,26 @@ module Foucault
     end
 
     def get(hdrs, params)
-      M.Try {
+      Try {
         @http_connection.get do |r|
-          r.headers = hdrs
-          r.params = params
+          r.headers = hdrs if hdrs
+          r.params = params if params
         end
       }.to_result
     end
 
     def post(hdrs, body)
-      M.Try {
+      Try {
         @http_connection.post do |r|
           r.body = body
+          r.headers = hdrs
+        end
+      }
+    end
+
+    def delete(hdrs)
+      Try {
+        @http_connection.delete do |r|
           r.headers = hdrs
         end
       }
@@ -42,7 +53,7 @@ module Foucault
         end
         faraday_connection
       rescue StandardError => e
-        M.Failure([HTTP_CONNECTION_FAILURE])
+        Failure([HTTP_CONNECTION_FAILURE])
       end
     end
 

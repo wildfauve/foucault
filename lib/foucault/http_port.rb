@@ -26,6 +26,18 @@ module Foucault
         }
       end
 
+      def delete
+        -> service, resource, hdrs {
+          Fn.compose.(
+            Fn.either.(net_ok).(Fn.success).(Fn.failure),
+            response_value,
+            run_delete.(hdrs),
+            addressed.(service, resource),
+          ).(connection.(nil))
+        }
+      end
+
+
       def run_post
         -> hdrs, body_fn, body, connection {
           connection.post(hdrs, body_fn.(body))
@@ -35,6 +47,12 @@ module Foucault
       def run_get
         -> hdrs, query, connection {
           connection.get(hdrs, query)
+        }.curry
+      end
+
+      def run_delete
+        -> hdrs, connection {
+          connection.delete(hdrs)
         }.curry
       end
 

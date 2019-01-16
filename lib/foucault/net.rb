@@ -5,23 +5,26 @@ module Foucault
 
     class << self
 
+      # Client interface
+
       def publish
         -> topic, partition_key, body_fn, event {
           KafkaPort.publish.(topic, partition_key, body_fn, event)
         }.curry
       end
 
-      # def auth
-      #   -> env, creds {
-      #     ClientCredentialsGrant.new.(client_id: creds[:client_id], secret: creds[:client_secret], env: env)
-      #   }.curry
-      # end
-
       def post
         -> service, resource, hdrs, enc, body_fn, body {
           HttpPort.post.(service, resource, hdrs, body_fn, enc, body)
         }.curry
       end
+
+      def delete
+        -> service, resource, hdrs {
+          HttpPort.delete.(service, resource, hdrs)
+        }.curry
+      end
+
 
       # @param service String
       # @param resource String

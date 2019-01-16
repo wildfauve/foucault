@@ -30,5 +30,4 @@ module Foucault
   require 'foucault/kafka_port'
 
   Fn = Funcify::Fn
-  M = Dry::Monads
 end
