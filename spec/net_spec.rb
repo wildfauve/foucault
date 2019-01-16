@@ -24,5 +24,21 @@ RSpec.describe Foucault::Net do
 
   end
 
+  context "#decode_basic_auth" do
+
+    it 'decodes a valid authorisation header' do
+      auth = subject.basic_auth_header.("username").("password")[:authorization]
+
+      result = subject.decode_basic_auth.(auth)
+      expect(result).to be_success
+      expect(result.value_or[0]).to eq "username"
+    end
+
+    it 'fails when the header is not valid' do
+      result = subject.decode_basic_auth.("invalid_auth")
+      expect(result).to be_failure
+    end
+  end
+
 
 end

@@ -3,6 +3,8 @@ require 'base64'
 module Foucault
   class Net
 
+    extend Dry::Monads::Try::Mixin
+
     class << self
 
       # Client interface
@@ -24,7 +26,6 @@ module Foucault
           HttpPort.delete.(service, resource, hdrs)
         }.curry
       end
-
 
       # @param service String
       # @param resource String
@@ -62,6 +63,18 @@ module Foucault
         -> c, s {
           { authorization: ("Basic " + Base64::strict_encode64("#{c}:#{s}")).chomp }
         }.curry
+      end
+
+      def decode_basic_auth
+        -> encoded_auth {
+          result = Try { Base64::strict_decode64(encoded_auth.split(/\s+/).last) }
+          case result.success?
+          when true
+            Try { result.value_or.split(":") }
+          else
+            result
+          end
+        }
       end
 
       # @param  Array[Hash]
