@@ -3,6 +3,8 @@ module Foucault
   class KafkaConnection
 
     include Logging
+    include Dry::Monads::Try::Mixin
+    include Dry::Monads::Result::Mixin
 
     def connection
       self
@@ -18,29 +20,29 @@ module Foucault
 
       begin
         client.value_or.deliver_message(event, topic: topic, partition_key: partition_key)
-        M::Success(nil)
+        Success(nil)
       rescue Kafka::Error => e
         info "Foucault::KafkaChannel #{topic}; #{e}"
-        M::Failure(nil)
+        Failure(nil)
       end
     end
 
 
     def topics
-      return M::Maybe(nil) unless client.success?
+      return Try(nil) unless client.success?
 
       begin
-        M::Maybe(client.value_or.topics)
+        Try(client.value_or.topics)
       rescue StandardError
-        M::Maybe(nil)
+        Try(nil)
       end
     end
 
     private
 
     def kafka_client
-      return M::Maybe(nil) unless kafka_broker_list.some?
-      @client ||= M::Maybe(client_adapter.new(kafka_broker_list.value_or, client_id: configuration.config.kafka_client_id, logger: logger.configured_logger))
+      return Try(nil) unless kafka_broker_list.some?
+      @client ||= Try(client_adapter.new(kafka_broker_list.value_or, client_id: configuration.config.kafka_client_id, logger: logger.configured_logger))
     end
 
     def kafka_broker_list

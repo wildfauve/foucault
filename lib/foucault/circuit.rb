@@ -47,7 +47,7 @@ module Foucault
         circuit.run
       rescue Stoplight::Error::RedLight => e
         info "CircuitBreaker: #{circuit_to_s}; Service: #{service_name} circuit red"
-        M::Failure(nil)
+        Failure(nil)
       end
     end
 
