@@ -83,6 +83,8 @@ module Foucault
             NetResponseValue::OK
           when 401, 403
             NetResponseValue::UNAUTHORISED
+          when 422
+            NetResponseValue::UNPROCESSABLE_ENTITY
           when 500..530
             NetResponseValue::SYSTEM_FAILURE
           else
@@ -119,6 +121,7 @@ module Foucault
       def returned_response(response)
         NetResponseValue.new(
           status: evalulate_status.(response.value_or.status),
+          code: response.value_or.status,
           body: response_body_parser.(response.value_or.headers["content-type"]).(response.value_or)
         )
       end

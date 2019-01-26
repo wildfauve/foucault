@@ -32,6 +32,7 @@ module Foucault
         -> response {
           NetResponseValue.new(
             status: evalulate_status.(response),
+            code: nil,
             body: nil
           )
         }
