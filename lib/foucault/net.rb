@@ -55,6 +55,11 @@ module Foucault
         }.curry
       end
 
+      def bearer_token_header
+        -> token {
+          { authorization: "Bearer #{token}"}
+        }
+      end
       # (a -> a) -> Hash
       # @param c [String] : Client or user
       # @param s [String] : secret or password
@@ -85,6 +90,10 @@ module Foucault
 
       def json_body_fn
         -> body { body.to_json }
+      end
+
+      def file_upload_fn
+        -> file { { :file => Faraday::UploadIO.new(file, 'text/csv') } }
       end
 
     end # class self
