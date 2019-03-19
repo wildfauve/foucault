@@ -129,7 +129,8 @@ module Foucault
       def catastrophic_failure
         NetResponseValue.new(
           status: NetResponseValue::SYSTEM_FAILURE,
-          body: nil
+          body: nil,
+          code: 500
         )
       end
 
