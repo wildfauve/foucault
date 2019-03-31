@@ -41,6 +41,17 @@ module Foucault
         }.curry
       end
 
+      # Graphql query entry method
+      # @param endpoint
+      # @param hdrs
+      # @param query
+      # @param query_vars
+      def query
+        -> endpoint, hdrs, query, query_vars {
+          GraphqlPort.query.(endpoint, hdrs, query, query_vars)
+        }.curry
+      end
+
 
       # That is, not a circuit breaker
       # @param fn(Llambda)      : A partially applied fn

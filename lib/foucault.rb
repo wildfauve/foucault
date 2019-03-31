@@ -23,6 +23,8 @@ module Foucault
   require 'foucault/configuration'
   require 'foucault/http_connection'
   require 'foucault/http_port'
+  require 'foucault/graphql_port'
+  require 'foucault/graphql_connection'
   require 'foucault/net_response_value'
 
   require 'foucault/kafka_connection'
