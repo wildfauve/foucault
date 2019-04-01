@@ -41,14 +41,16 @@ module Foucault
         }.curry
       end
 
-      # Graphql query entry method
-      # @param endpoint
-      # @param hdrs
-      # @param query
-      # @param query_vars
+      # GraphQL query wrapper method
+      # For connection reuse (including retreiving the schema), the endpoint/hdrs
+      # should be passed first, with the resulting Llambda cached for performance.
+      # @param endpoint     # the complete url
+      # @param hdrs         # Hash which should include {authorization: <token>}
+      # @param query        # A gql query
+      # @param query_vars   # Hash; input values to be passed with the query
       def query
         -> endpoint, hdrs, query, query_vars {
-          GraphqlPort.query.(endpoint, hdrs, query, query_vars)
+          GraphqlPort.query.(endpoint, hdrs).(query, query_vars)
         }.curry
       end
 
