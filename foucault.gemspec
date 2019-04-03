@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Network Functions}
   spec.description   = %q{Network Functions.}
-  spec.homepage      = "https://github.com/wildfauve/value_tree"
+  spec.homepage      = "https://github.com/wildfauve/foucault"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
