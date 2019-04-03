@@ -108,6 +108,8 @@ module Foucault
             html_parser
           when "text/plain"
             text_parser
+          when "text/csv"
+            text_parser
           when "application/json"
             json_parser
           when "application/xml", "application/soap+xml", "text/xml"
@@ -147,6 +149,10 @@ module Foucault
       end
 
       def text_parser
+        -> response { response.body }
+      end
+
+      def text_csv
         -> response { response.body }
       end
 
