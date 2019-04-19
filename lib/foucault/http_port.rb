@@ -2,6 +2,8 @@ module Foucault
 
   class HttpPort
 
+    extend Dry::Monads::Try::Mixin
+
     class << self
 
       def post
@@ -67,13 +69,20 @@ module Foucault
       end
 
       def address
-        -> service, resource { service + resource }.curry
+        -> service, resource {
+          (service || "") + (resource || "")
+        }.curry
       end
 
       def response_value
         -> response {
-          response.success? ? returned_response(response) : catastrophic_failure
+          response.success? ? try_handle_response(response) : catastrophic_failure
         }
+      end
+
+      def try_handle_response(response)
+        result = Try { returned_response(response) }
+        result.success? ? result.value_or : catastrophic_failure
       end
 
       def evalulate_status
@@ -115,7 +124,7 @@ module Foucault
           when "application/xml", "application/soap+xml", "text/xml"
             xml_parser
           else
-            json_parser
+            nil_parser
           end
         }
       end
@@ -153,6 +162,10 @@ module Foucault
       end
 
       def text_csv
+        -> response { response.body }
+      end
+
+      def nil_parser
         -> response { response.body }
       end
 

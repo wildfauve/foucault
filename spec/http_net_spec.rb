@@ -23,6 +23,12 @@ RSpec.describe Foucault::Net do
                                     headers: {"content-type"=>"application/json"})
                          }
 
+    let(:no_content_response)  {double("http_resp", body: '{"message" : "I am json"} ', status: 201,
+                                   headers: {"content-type"=>nil})
+                        }
+
+
+
     let(:faraday_request_object) { double("request", :headers= => {}, :body= => {}) }
 
     let(:faraday_connection_object) { double("connection", use: faraday_request_object,
@@ -43,6 +49,26 @@ RSpec.describe Foucault::Net do
       expect(result).to be_success
       expect(result.value_or.status).to be :ok
       expect(result.value_or.body).to eq({"message" => "I am json"})
+
+    end
+
+    it 'posts but does not return a content type' do
+      expect(Faraday).to receive(:new).with(url: "http://api.example.com/resource").and_yield(faraday_connection_object)
+
+      expect(faraday_request_object).to receive(:post).and_yield(faraday_request_object).and_return(no_content_response)
+
+      result = subject.post.("http://api.example.com", "/resource", {}, nil, subject.json_body_fn, {message: "some message"})
+
+      expect(result).to be_failure
+      expect(result.failure.status).to be :system_failure
+
+    end
+
+    it 'fails when the URL is invalid' do
+
+      result = subject.post.(nil, nil, {}, nil, subject.json_body_fn, {message: "some message"})
+      
+      expect(result).to be_failure
 
     end
 
