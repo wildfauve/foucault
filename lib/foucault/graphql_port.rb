@@ -11,7 +11,7 @@ module Foucault
             response_value,
             run_query.(query, query_vars)
           ).(connection.(endpoint, hdrs))
-        }
+        }.curry
       end
 
 
