@@ -92,6 +92,8 @@ module Foucault
             NetResponseValue::OK
           when 401, 403
             NetResponseValue::UNAUTHORISED
+          when 404
+            NetResponseValue::NOT_FOUND
           when 422
             NetResponseValue::UNPROCESSABLE_ENTITY
           when 500..530
