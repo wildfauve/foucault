@@ -4,6 +4,7 @@ module Foucault
 
     FAIL                 = :fail
     OK                   = :ok
+    BAD_REQUEST          = :bad_request
     UNAUTHORISED         = :unauthorised
     NOT_FOUND            = :not_found
     SYSTEM_FAILURE       = :system_failure
@@ -13,7 +14,7 @@ module Foucault
 
     attribute :status,          NET_STATUS
     attribute :code,            Types::Integer.optional
-    attribute :body,            Types::Class
+    attribute :body,            Types::Nominal::Any.optional
 
   end
 

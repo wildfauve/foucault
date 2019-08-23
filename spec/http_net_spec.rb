@@ -67,7 +67,7 @@ RSpec.describe Foucault::Net do
     it 'fails when the URL is invalid' do
 
       result = subject.post.(nil, nil, {}, nil, subject.json_body_fn, {message: "some message"})
-      
+
       expect(result).to be_failure
 
     end

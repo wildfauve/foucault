@@ -90,6 +90,8 @@ module Foucault
           case status
           when 200..300
             NetResponseValue::OK
+          when 400
+            NetResponseValue::BAD_REQUEST
           when 401, 403
             NetResponseValue::UNAUTHORISED
           when 404
