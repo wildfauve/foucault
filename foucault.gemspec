@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday'
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'graphlient'
-  spec.add_dependency "dry-types", "= 0.15.0"
+  spec.add_dependency "dry-types"
   spec.add_dependency "dry-struct"
   spec.add_dependency 'ruby-kafka', '~> 0.7.6'
   spec.add_dependency 'zk'
