@@ -9,8 +9,8 @@ module Foucault
 
     HTTP_CONNECTION_FAILURE = :http_connection_failure
 
-    def connection(address, encoding, logging_level = nil, cache_store = nil, instrumenter = nil)
-      @http_connection = http_connection(address, encoding, (Configuration.config.logging_level.to_sym || :info), cache_store, instrumenter)
+    def connection(address, encoding, cache_store = nil, instrumenter = nil)
+      @http_connection = http_connection(address, encoding, cache_store, instrumenter)
       self
     end
 
@@ -42,16 +42,19 @@ module Foucault
 
     private
 
-    def http_connection(address, encoding, logging_level, cache_store, instrumenter)
+    def http_connection(address, encoding, cache_store, instrumenter)
       begin
         # caching = cache_options(cache_store, instrumenter)
         faraday_connection = Faraday.new(:url => address) do |faraday|
           # faraday.use :http_cache, caching if caching
           faraday.request  encoding if encoding
-          faraday.response :logger do |log|
-            log.filter(/(Bearer.)(.+)/, '\1[REMOVED]')
-            log.filter(/(Basic.)(.+)/, '\1[REMOVED]')
-            log.log_level(log_level)
+          if Configuration.config.logger
+            faraday.response :logger, Configuration.config.logger
+          else
+            faraday.response :logger do |log|
+              log.filter(/(Bearer.)(.+)/, '\1[REMOVED]')
+              log.filter(/(Basic.)(.+)/, '\1[REMOVED]')
+            end
           end
           faraday.adapter  :typhoeus
         end
