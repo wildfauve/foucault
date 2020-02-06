@@ -12,6 +12,7 @@ end
 
 Foucault::Configuration.configure do |config|
   config.logger = TestLogger.new
+  config.logging_level = :info
 end
 
 
