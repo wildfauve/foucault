@@ -49,7 +49,7 @@ module Foucault
           # faraday.use :http_cache, caching if caching
           faraday.request  encoding if encoding
           if Configuration.config.logger
-            faraday.response :logger, Configuration.config.logger
+            faraday.response :logger, Configuration.config.logger, { headers: true, bodies: true }
           else
             faraday.response :logger do |log|
               log.filter(/(Bearer.)(.+)/, '\1[REMOVED]')
