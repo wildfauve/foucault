@@ -48,8 +48,10 @@ module Foucault
         faraday_connection = Faraday.new(:url => address) do |faraday|
           # faraday.use :http_cache, caching if caching
           faraday.request  encoding if encoding
-          if Configuration.config.logger
-            faraday.response :logger, Configuration.config.logger, { headers: true, bodies: true }
+          if Configuration.config.logger && Configuration.config.log_formatter
+            faraday.response :logger, Configuration.config.logger, formatter: Configuration.config.log_formatter
+          elsif Configuration.config.logger
+            faraday.response :logger, Configuration.config.logger
           else
             faraday.response :logger do |log|
               log.filter(/(Bearer.)(.+)/, '\1[REMOVED]')

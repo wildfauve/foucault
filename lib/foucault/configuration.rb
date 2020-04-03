@@ -14,6 +14,7 @@ module Foucault
     setting :zookeeper_broker_list
     setting :kafka_broker_list
     setting :logger
+    setting :log_formatter
     setting :logging_level
 
   end  # class Configuration
