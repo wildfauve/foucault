@@ -3,11 +3,12 @@ require "foucault"
 require 'pry'
 
 M = Dry::Monads
+Fn = Funcify::Fn
 
 class TestLogger
-  def debug(msg); puts "TEST LOGGER ===> #{msg}"; end
-  def info(msg); puts "TEST LOGGER ===> #{msg}"; end
-  def error(msg); puts "TEST LOGGER ===> #{msg}"; end
+  def debug(msg); puts msg; end
+  def info(msg); puts msg; end
+  def error(msg); puts msg; end
 end
 
 Foucault::Configuration.configure do |config|

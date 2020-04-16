@@ -19,6 +19,7 @@ module Foucault
     end
 
     def filtered(msg)
+      return unless msg.instance_of?(String)
       filters = FILTERS.map { |f| msg.downcase.include? f }
       if filters.any?
         "[FILTERED]"

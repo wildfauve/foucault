@@ -52,6 +52,23 @@ RSpec.describe Foucault::Net do
 
     end
 
+    it 'posts using a circuit' do
+      expect(Faraday).to receive(:new).with(url: "http://api.example.com/resource").and_yield(faraday_connection_object)
+
+      expect(faraday_request_object).to receive(:post).and_yield(faraday_request_object).and_return(json_response)
+
+      caller = Fn.wrapper.(subject.post.("http://api.example.com", "/resource", {}, nil, subject.json_body_fn, {message: "some message"}))
+
+      circuit = Foucault::Circuit.new(name: "http_test")
+
+      result = circuit.(circuit_fn: Foucault::Circuit.monad_circuit_wrapper_fn, caller: caller)
+
+      expect(result).to be_success
+      expect(result.value_or.status).to be :ok
+      expect(result.value_or.body).to eq({"message" => "I am json"})
+
+    end
+
     it 'posts but does not return a content type' do
       expect(Faraday).to receive(:new).with(url: "http://api.example.com/resource").and_yield(faraday_connection_object)
 

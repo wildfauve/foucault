@@ -1,13 +1,14 @@
 module Foucault
 
-  class PortException < StandardError
+  class MonadException < StandardError
 
-    attr_reader :error_code, :retryable
+    attr_reader :error_code, :retryable, :result
 
-    def initialize(msg: "", code: nil, retryable: true)
+    def initialize(result: , code: nil, retryable: true)
       self.error_code = code
       @retryable = retryable
-      super(msg)
+      @result = result
+      super(nil)
     end
 
     def error_code=(code)

@@ -26,6 +26,7 @@ module Foucault
   require 'foucault/graphql_port'
   require 'foucault/graphql_connection'
   require 'foucault/net_response_value'
+  require 'foucault/monad_exception'
 
   require 'foucault/kafka_connection'
   require 'foucault/kafka_brokers'
