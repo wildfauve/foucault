@@ -9,8 +9,8 @@ module Foucault
 
     HTTP_CONNECTION_FAILURE = :http_connection_failure
 
-    def connection(address, encoding, cache_store = nil, instrumenter = nil)
-      @http_connection = http_connection(address, encoding, cache_store, instrumenter)
+    def connection(address, opts, encoding, cache_store = nil, instrumenter = nil)
+      @http_connection = http_connection(address, opts, encoding, cache_store, instrumenter)
       self
     end
 
@@ -42,10 +42,10 @@ module Foucault
 
     private
 
-    def http_connection(address, encoding, cache_store, instrumenter)
+    def http_connection(address, opts={}, encoding, cache_store, instrumenter)
       begin
         # caching = cache_options(cache_store, instrumenter)
-        faraday_connection = Faraday.new(:url => address) do |faraday|
+        faraday_connection = Faraday.new(opts.merge(url: address)) do |faraday|
           # faraday.use :http_cache, caching if caching
           faraday.request  encoding if encoding
           if Configuration.config.logger && Configuration.config.log_formatter

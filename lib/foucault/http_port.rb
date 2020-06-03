@@ -7,35 +7,35 @@ module Foucault
     class << self
 
       def post
-        -> service, resource, hdrs, body_fn, enc, body {
+        -> service, resource, opts, hdrs, body_fn, enc, body {
           Fn.compose.(
             Fn.either.(net_ok).(Fn.success).(Fn.failure),
             response_value,
             run_post.(hdrs, body_fn, body),
             addressed.(service, resource),
-          ).(connection.(enc))
+          ).(connection.(opts, enc))
         }
       end
 
       def get
-        -> service, resource, hdrs, enc, query {
+        -> service, resource, opts, hdrs, enc, query {
           Fn.compose.(
             Fn.either.(net_ok).(Fn.success).(Fn.failure),
             response_value,
             run_get.(hdrs, query),
             addressed.(service, resource),
-          ).(connection.(enc))
+          ).(connection.(opts, enc))
         }
       end
 
       def delete
-        -> service, resource, hdrs {
+        -> service, resource, opts, hdrs {
           Fn.compose.(
             Fn.either.(net_ok).(Fn.success).(Fn.failure),
             response_value,
             run_delete.(hdrs),
             addressed.(service, resource),
-          ).(connection.(nil))
+          ).(connection.(opts, nil))
         }
       end
 
@@ -65,7 +65,7 @@ module Foucault
       end
 
       def connection
-        -> encoding, address { HttpConnection.new.connection(address, encoding) }.curry
+        -> opts, encoding, address { HttpConnection.new.connection(address, opts, encoding) }.curry
       end
 
       def address

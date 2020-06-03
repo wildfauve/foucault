@@ -16,8 +16,8 @@ module Foucault
       end
 
       def post
-        -> service, resource, hdrs, enc, body_fn, body {
-          HttpPort.post.(service, resource, hdrs, body_fn, enc, body)
+        -> service, resource, opts, hdrs, enc, body_fn, body {
+          HttpPort.post.(service, resource, opts, hdrs, body_fn, enc, body)
         }.curry
       end
 
@@ -36,8 +36,8 @@ module Foucault
       # Example
       # > get.(@env[:host], "/userinfo", {authorization: "Bearer <token> }, :url_encoded, {} )
       def get
-        -> service, resource, hdrs, enc, query {
-            HttpPort.get.(service, resource, hdrs, enc, query)
+        -> service, resource, opts, hdrs, enc, query {
+            HttpPort.get.(service, resource, opts, hdrs, enc, query)
         }.curry
       end
 

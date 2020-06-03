@@ -8,7 +8,7 @@ GIT
 PATH
   remote: .
   specs:
-    foucault (0.4.5)
+    foucault (1.0.0)
       dry-configurable
       dry-monads (~> 1.0)
       dry-struct
@@ -54,16 +54,16 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.4)
       dry-equalizer
-    dry-struct (1.1.1)
+    dry-struct (1.2.0)
       dry-core (~> 0.4, >= 0.4.3)
-      dry-equalizer (~> 0.2)
+      dry-equalizer (~> 0.3)
       dry-types (~> 1.0)
       ice_nine (~> 0.11)
-    dry-types (1.2.1)
+    dry-types (1.2.2)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
       dry-core (~> 0.4, >= 0.4.4)
-      dry-equalizer (~> 0.2, >= 0.2.2)
+      dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
     ethon (0.12.0)
